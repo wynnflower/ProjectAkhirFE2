@@ -1,0 +1,91 @@
+.diskon{
+    background-color: red;
+    position:absolute;
+    top:20px;
+    right:0px;
+    width:55px;
+    color:white;
+    font-weight:500;
+    text-align: center;
+}
+.img{
+    cursor:pointer;
+}
+.kategori{
+    background-color: grey;
+    position:absolute;
+    top:120px;
+    right:0px;
+    width:200px;
+    color:white;
+    font-weight:500;
+    text-align: center;
+    cursor:pointer;
+}
+/* Gradient Effect 1 */
+.gradienteff {
+    position:relative;
+    float: left;
+    background: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0) 100%);
+    
+}
+/* .gradienteff:after {
+    content: '';
+    position:absolute;
+    top:0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.5) 100%);
+    z-index: 1;
+} */
+
+.gradienteff:hover{
+    background:none;
+    transition: background 1s ease-in;
+}
+.gradienteff:hover::after {
+    content: '';
+    position:absolute;
+    top:0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    /* background: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.5) 100%); */
+    background-color:rgba(0,0,0,0.4);
+    z-index: 1;
+    opacity:1;
+}
+/*Efek Gradient 2*/
+/* .gradienteff {
+    background-size: 100%;
+    background-image: linear-gradient(#fff, #ccc);
+    border-radius: 0.45rem;
+    border: 1px solid #ddd;
+    cursor: pointer;
+    color: #333;
+    display: inline-block;
+    font-size: 1.25rem;
+    font-weight: 300;
+    padding: 1rem 1.5rem;
+    position: relative;
+    z-index: 100;
+}
+    
+.gradienteff:before {
+    border-radius: inherit;
+    background-image: linear-gradient(#ccc, #fff);
+    content: '';    
+    display: block;
+    height: 100%;
+    position: absolute;
+    top: 0; left: 0;
+    opacity: 0;
+    width: 100%;
+    z-index: -100;
+    transition: opacity 0.45s;
+}
+    
+.gradienteff:hover:before {
+    opacity: 1;
+} */
