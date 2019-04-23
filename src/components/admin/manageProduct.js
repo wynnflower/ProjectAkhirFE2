@@ -420,7 +420,8 @@ renderDropDown=()=>{
                                 <option></option>
                                     {this.renderDropDown()}
                                 </select>
-                              <Input className="mr-2 mb-2" placeholder="Gambar" ref={input=>this.gambar=input}></Input>
+                              <Button className="mr-2 mb-2" placeholder="Gambar" ref={input=>this.gambar=input}>Upload Img</Button>
+                              <Input className="mr-2 mb-2" placeholder="Upload" ref={input=>this.gambar=input} type="file"></Input>
                               <Input className="mr-2 mb-2" placeholder="Deskripsi" ref={input=>this.deskripsi=input}></Input>
                               <Button color='blue'>
                                   <Button.Content onClick={this.onBtnAdd}>Add Product</Button.Content>

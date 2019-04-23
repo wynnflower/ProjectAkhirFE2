@@ -14,6 +14,7 @@ import Kategori from './components/kategori'
 import Footer from './components/footer'
 import History from './components/history'
 import ProductByKat from './components/productByKategori'
+import ManageKategori from './components/admin/manageKategori'
 
 import { Route, withRouter, Switch } from 'react-router-dom'
 import { connect } from 'react-redux'
@@ -46,6 +47,7 @@ class App extends Component {
             <Route path='/products' component={Product} exact/>
             <Route path='/flashproducts' component={ProductFlash} exact/>
             <Route path='/manage' component={ManageProduct} exact/>
+            <Route path='/managekat' component={ManageKategori} exact/>
             <Route path='/cart' component={Cart} exact/>
             <Route path='/kategori' component={Kategori} exact/>
             <Route path='/productbykat/:tipekat' component={ProductByKat} exact/>

@@ -1,3 +1,25 @@
+## Progress Project Akhir
+## Nama Aplikasi
+Aplikasi E-Commerce Toko Pribadi saya: Minamo Toys and Hobbies (https://www.tokopedia.com/minamotoysjogja)
+## Database
+Sudah mulai pakai database MySQL, tapi di front end masih pakai json server karena belum ada upload image
+## Fitur
++ Fitur Sudah sampai Histori Transaksi
++ Sudah ada API untuk get data (termasuk search, filter promo, kategori, subkategori)
++ ada API detail Produk di product detail dan cart (tapi baru sebatas Read data, belum ada Create, Update, dan Delete di Manage Product dan Cart --> masih pake json server)
+- Belum sampai nodemailer, login with google, dan verifikasi
+- Belum update urlAPI Axios di Front End, baru coba2 input / get data di Postman
+## Kendala
++ Di bagian Cookie yang nyimpen Global State
+## Tugas Verifikasi
+- Belum dicoba, tapi flownya sudah paham, cuman masih bingung generate link verifikasi yang di encode (ngasih parameter link yang diconvert ke base64)
+
+
+
+
+
+## --------------------------------------------------------------
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
