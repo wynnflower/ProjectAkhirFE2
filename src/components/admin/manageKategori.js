@@ -92,6 +92,19 @@ class ManageKategori extends React.Component{
             kategori:this.refs.editKat.value!=''?this.refs.editKat.value:this.refs.editKat.placeholder
         }
         alert('id: '+id+', kategori: '+newData.kategori)
+        var fd=new FormData()
+        if (this.state.editFileKat !==null){
+            fd.append('imagekat',this.state.editFileKat,this.state.editFileKat.name)
+        }
+        fd.append('data',JSON.stringify(newData))
+        console.log(fd)
+        Axios.put('http://localhost:4000/kategori/editkategori/'+id,fd)
+        .then((res)=>{
+            console.log(res)
+            alert(res.data)
+            this.setState({editItemKat:{},isEdit:false,selectEdit:-1,editFileKat:null})
+            this.getKategori()
+        })
     }
     renderSubkategori=()=>{
         var jsx = this.state.listSubkat.map((val)=>{
