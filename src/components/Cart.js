@@ -15,7 +15,7 @@ class Cart extends React.Component{
     }
     getDataApi=()=>{
         var nama=this.props.nama
-        Axios.get(urlApi+'/cart?username='+nama)
+        Axios.get(urlApi+'/cart/getusercart?username='+nama)
         .then((res)=>{
             console.log(res)
             this.setState({cart:res.data,username:nama})
@@ -84,7 +84,8 @@ class Cart extends React.Component{
         // })
     }
     onCartDelete=(id)=>{
-        Axios.delete(urlApi+'/cart/'+id)
+        //Axios.delete(urlApi+'/cart/'+id)
+        Axios.delete(urlApi+'/cart/delcart?id='+id+'&username='+this.state.username)
         .then((res)=>{
           console.log(res)
           swal({title: "Delete Cart!",
@@ -102,8 +103,8 @@ class Cart extends React.Component{
         var nambah = val
         nambah.qty = nambah.qty+1
         this.setState({editItem:nambah})
-        var newData={nama:nambah.nama,username:this.props.nama,harga:nambah.harga,qty:nambah.qty,link:nambah.link}
-        Axios.put(urlApi+'/cart/'+nambah.id,newData)
+        var newData={username:this.state.username, idproduk:nambah.idproduk,qty:nambah.qty}
+        Axios.put(urlApi+'/cart/editcart/'+nambah.id,newData)
         .then((res)=>{
             console.log(res)
             this.getDataApi()
@@ -116,8 +117,10 @@ class Cart extends React.Component{
         var ngurang = val
         ngurang.qty = ngurang.qty-1
         this.setState({editItem:ngurang})
-        var newData={nama:ngurang.nama,username:this.props.nama,harga:ngurang.harga,qty:ngurang.qty,link:ngurang.link}
-        Axios.put(urlApi+'/cart/'+ngurang.id,newData)
+        //var newData={nama:ngurang.nama,username:this.props.nama,harga:ngurang.harga,qty:ngurang.qty,link:ngurang.link}
+        var newData={username:this.state.username, idproduk:ngurang.idproduk,qty:ngurang.qty}
+        // Axios.put(urlApi+'/cart/'+ngurang.id,newData)
+        Axios.put(urlApi+'/cart/editcart/'+ngurang.id,newData)
         .then((res)=>{
             console.log(res)
             this.getDataApi()
@@ -132,9 +135,9 @@ class Cart extends React.Component{
             if (this.props.nama!==""){
                 return(
                     <tr>
-                        <th style={{textAlign:'center'}}><img src={val.link} width="200" height="100"/></th>
+                        <th style={{textAlign:'center'}}><img src={urlApi+'/'+val.image} width="200" height="100"/></th>
                         <td>{val.nama}</td>
-                        <td>{val.harga}</td>
+                        <td>{val.hargadiskon}</td>
                         <td><button className="btn btn-primary" onClick={()=>{this.onSubtract(val)}}><i class="fas fa-minus"></i></button></td>
                             
                             <td>{val.qty}</td>

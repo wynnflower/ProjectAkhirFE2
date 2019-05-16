@@ -12,10 +12,13 @@ class ProductDetail extends React.Component{
     }
     getDataApi=()=>{
         var idUrl=this.props.match.params.id
-        Axios.get(urlApi+'/product/'+idUrl)
+        alert(urlApi+'/product/getproductdetail/'+idUrl)
+        Axios.get(urlApi+'/product/getproductdetail/'+idUrl)
         .then((res)=>{
             console.log(res)
-            this.setState({product:res.data})
+            console.log(res.data)
+            this.setState({product:res.data[0]})
+            //console.log(this.state.product)
         })
         .catch((err)=>{
             console.log(err)
@@ -88,24 +91,34 @@ class ProductDetail extends React.Component{
         })
     }
     render(){
-        var {nama,link,diskon,harga,deskripsi}=this.state.product
+        var {nama,image,diskon,harga,deskripsi}=this.state.product
         return(
             <div className="container">
                 <div className="row">
                     <div className="col-md-4">
                         <div className="card" style={{width: '100%'}}>
-                        <img className="card-img-top" src={link} alt={deskripsi} />
+                        <img className="card-img-top" src={'http://localhost:4000/'+image} alt={deskripsi} />
                         </div>
 
                     </div>
                     <div className="col-md-8">
                         <h1 style={{color:'#4C4C4C'}}>{nama}</h1>
-                        <div style={{backgroundColor:'#D50000',color:'white',width:'80px',height:'22px',textAlign:'center',display:'inline-block',marginRight:'5px'}}>
+                        {
+                            diskon>0?
+                            <div style={{backgroundColor:'#D50000',color:'white',width:'80px',height:'22px',textAlign:'center',display:'inline-block',marginRight:'5px'}}>
                             {diskon}% OFF
                         </div>
-                        <span style={{fontSize:'12px',color:'#606060',fontWeight:'600',textDecoration:'line-through'}}>
+                        :null
+                        }
+                        {
+                            diskon>0?
+                            <span style={{fontSize:'12px',color:'#606060',fontWeight:'600',textDecoration:'line-through'}}>
                             Rp. {harga}
                         </span>
+                        :null
+                        }
+                        
+                        
                         <div style={{marginTop:'20px',fontSize:'24px',fontWeight:'700',color:'#FF5722'}}>Rp. {harga -(harga * diskon /100)}</div>
 
                         <div className="row">

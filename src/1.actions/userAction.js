@@ -11,7 +11,8 @@ export const onLogin=(paramUsername,paramPassword)=>{
         })
 
         // Get Data dari Fake Api Json Server
-        axios.get('http://localhost:2000/users',{ //asynchronous action
+        // axios.get('http://localhost:2000/users',{ //asynchronous action
+        axios.get('http://localhost:4000/user/logincart',{
             params:{username:paramUsername,
                 password:paramPassword} //username(json/fake api):username(parameter)
         })
@@ -27,10 +28,13 @@ export const onLogin=(paramUsername,paramPassword)=>{
                         payload:{
                             username:res.data[0].username,
                             role:res.data[0].role,
-                            id:res.data[0].id
+                            id:res.data[0].id,
+                            verified:res.data[0].verified,
+                            cartitems:res.data[0].cartitems
                         }
                     }
                 )
+                objCookie.set('userData',paramUsername,{path:'/'})
             } else{
                 dispatch({
                     type:'USER_NOT_FOUND'
@@ -49,7 +53,7 @@ export const onLogin=(paramUsername,paramPassword)=>{
 
 export const keepLogin=(cookie)=>{
     return (dispatch)=>{
-        axios.get('http://localhost:2000/users',{params:{username:cookie}})
+        axios.get('http://localhost:4000/user/keeplogincart',{params:{username:cookie}})
         .then((res)=>{
             if(res.data.length>0){
                 dispatch({
@@ -57,7 +61,10 @@ export const keepLogin=(cookie)=>{
                     payload:{
                         username:res.data[0].username,
                         role:res.data[0].role,
-                        id:res.data[0].id}// <-- dari userGlobal
+                        id:res.data[0].id,
+                        verified:res.data[0].verified,
+                        cartitems:res.data[0].cartitems
+                    }// <-- dari userGlobal
                 })
             }
         })
@@ -78,7 +85,7 @@ export const userRegister=(paramUsername,paramPassword,paramEmail,paramPhone)=>{
             type:'LOADING'
         })
         var newData={username:paramUsername,password:paramPassword,email:paramEmail,phone:paramPhone}
-        axios.get(urlApi+'/users?username='+newData.username)
+        axios.get(urlApi+'/user/register?username='+newData.username)
         .then((res)=>{ // kalau username sudah ada
             console.log(res)
             if(res.data.length>0){

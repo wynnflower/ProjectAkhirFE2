@@ -1,60 +1,48 @@
 import React from 'react'
-import Axios from 'axios'
+import Axios from 'axios';
+import {connect} from 'react-redux'
 import {Link} from 'react-router-dom'
-import './../support/css/product.css'
+import { urlApi } from '../support/urlAPI';
 
-class Product extends React.Component{
-    state={listProduct:[],page:1}
-    constructor(props) {
-        super(props);
-        this.handleScroll = this.handleScroll.bind(this);
-      }
-      
-      componentDidMount() {
-        window.addEventListener('scroll', this.handleScroll);
-        this.getProduct()
-      };
-      
-      componentWillUnmount() {
-        window.removeEventListener('scroll', this.handleScroll);
-      };
-      
-      handleScroll(event) {
-        //console.log('the scroll things', event)
-        //console.log(window.scrollY)
-        var hal=Math.floor((window.scrollY/300)-4)
-        if(hal>1){
-            hal=hal+1
-            console.log(hal)
-            this.setState({page:hal})
-            //alert(this.state.page)
-            this.getProduct()
-        }
-      };
-    
-    getProduct=()=>{
-        //var items=this.state.page * 8
-        //Axios.get('http://localhost:2000/product?_page=1&_limit='+items)
-        Axios.get('http://localhost:4000/product/getproductfull')
-        .then((res)=>{
-            this.setState({listProduct:res.data})
-            //alert(res.data[0].nama)
-            //this.props.inputProduk(res.data)
-            //this.props.inputProduk([this.state.listProduct.nama,this.state.listProduct.harga,this.state.listProduct.kategori,this.state.listProduct.link])
-            }
-        )
-        .catch((err)=>console.log(err))
-        
+class ProductSubkat extends React.Component{
+    state={product:[],subkategori:''}
+    componentDidMount(){
+        this.getDataApi()
+        this.getSubKategoriName()
     }
+    getDataApi=()=>{
+        var kat=this.props.match.params.idsubkat
+        // alert(kat)
+        Axios.get(urlApi+'/product/getproductsubkat/'+kat)
+        .then((res)=>{
+            console.log(res)
+            this.setState({product:res.data})
+        })
+        .catch((err)=>{
+            console.log(err)
+        })
+    }
+    getSubKategoriName=()=>{
+        var idsubkat=this.props.match.params.idsubkat
+        Axios.get(urlApi+'/kategori/getsubkatheader/'+idsubkat)
+        .then((res)=>{
+            console.log(res)
+            this.setState({subkategori:res.data[0]})
+        })
+        .catch((err)=>{
+            console.log(err)
+        })
+    }
+    
     renderProduct=()=>{
-        var jsx=this.state.listProduct.map((val)=>{
+        var jsx=this.state.product.map((val)=>{
             return(
                 <div className="col-lg-3 produk mb-3">
                     <div className="card" style={{height:'350px'}}>
                         <Link to={"/productdetail/"+val.id}>
                         <div class="gradienteff">
                         
-                            <img className="card-img-top img img-1" src={'http://localhost:4000/'+val.image} alt={'http://localhost:4000/'+val.image} style={{height:'150px'}} />
+                            <img className="card-img-top img img-1" src={'http://localhost:4000/'+val.image} alt={val.nama} style={{height:'150px'}} />
                             {/* <div>{val.id}</div> */}
                         
                             
@@ -92,15 +80,21 @@ class Product extends React.Component{
     }
     render(){
         return(
-            <div>
-                <div className="producthead">Semua Produk</div>
+            <div className="container">
+            <h1>Product - {this.state.subkategori.kategori} - {this.state.subkategori.subkategori}</h1>
                 <div className="row">
                 
                     {this.renderProduct()}
                 </div>
             </div>
-           
         )
     }
 }
-export default Product;
+const mapStateToProps =(state)=>{ 
+    return {
+        id:state.user.id,
+        nama: state.user.username,
+        role:state.user.role
+    }
+}
+export default connect(mapStateToProps) (ProductSubkat)

@@ -1,8 +1,8 @@
-const INITIAL_STATE={id:0,username:"",error:"",loading:false,role:""}
+const INITIAL_STATE={id:0,username:"",error:"",loading:false,role:"",verified:false,cartitems:-1}
 
 export default(state=INITIAL_STATE,action)=>{
     if(action.type==='LOGIN_SUCCESS'){
-        return {...INITIAL_STATE,username:action.payload.username,role:action.payload.role,id:action.payload.id}
+        return {...INITIAL_STATE,username:action.payload.username,role:action.payload.role,id:action.payload.id,verified:action.payload.id,cartitems:action.payload.cartitems}
         //return {...INITIAL_STATE,username:action.payload.username}
     } else if(action.type==='LOADING'){
         return {...INITIAL_STATE,loading:true}

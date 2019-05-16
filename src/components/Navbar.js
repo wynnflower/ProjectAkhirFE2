@@ -73,7 +73,7 @@ class HeaderKu extends Component{
                                 :
                                         
                                         <NavItem>
-                                            <Link to="/cart"><NavLink className="btn btn-default border-secondary navbarcontent" style={{fontSize:"14px",color:'white'}}><i className="fas fa-shopping-cart navbarcontent"/> Cart</NavLink></Link>
+                                            <Link to="/cart"><NavLink className="btn btn-default border-secondary navbarcontent" style={{fontSize:"14px",color:'white'}}><i className="fas fa-shopping-cart navbarcontent"/> Cart:{this.props.cartitems}</NavLink></Link>
                                         </NavItem>                                
                                 }
                                 {
@@ -161,7 +161,8 @@ class HeaderKu extends Component{
 const mapStateToProps=(state)=>{
     return{
         nama:state.user.username,
-        role:state.user.role
+        role:state.user.role,
+        cartitems:state.user.cartitems
     }
 }
 

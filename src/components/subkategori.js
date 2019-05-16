@@ -5,13 +5,16 @@ import { urlApi } from '../support/urlAPI';
 import {Link} from 'react-router-dom'
 import './../support/css/product.css'
 
-class Kategori extends React.Component{
-    state={kategori:[]}
+class Subkategori extends React.Component{
+    state={kategori:[],idkat:0}
     componentDidMount(){
         this.getDataApi()
     }
+    componentWillReceiveProps(newprops){
+        this.setState({idkat:newprops.idkat})
+    }
     getDataApi=()=>{
-        Axios.get(urlApi+'/kategori/getkategori')
+        Axios.get(urlApi+'/kategori/getsubbykat/'+this.props.idkat)
         .then((res)=>{
             console.log(res)
             this.setState({kategori:res.data})
@@ -20,13 +23,13 @@ class Kategori extends React.Component{
             console.log(err)
         })
     }
-    renderCart=()=>{
+    renderSubkategori=()=>{
         var jsx=this.state.kategori.map((val)=>{
                 return(
                     <div className="col-lg-3 produk mb-3">
                         <div className="card">
                             <div class="row justify-content-center">
-                            <Link to={"/productbykat/"+val.id}>
+                            <Link to={"/productbysubkat/"+val.id}>
                                 <div className="gradienteff" style={{width:'253px',height:'150px'}}>
                                 
                                 <img className="card-img-top gradienteff" src={urlApi+'/'+val.image} alt={val.image} style={{height:'150px'}}  />
@@ -35,7 +38,7 @@ class Kategori extends React.Component{
                                 </Link>
                             </div>
                             <div className="card-body">
-                            <h5 className="card-title" style={{textAlign:'center',fontSize:'16px'}}>{val.kategori}</h5>
+                            <h5 className="card-title" style={{textAlign:'center',fontSize:'16px'}}>{val.subkategori}</h5>
                             </div>
                         </div>
                     </div>
@@ -48,11 +51,11 @@ class Kategori extends React.Component{
                 <div>
                     <div className="producthead">Semua Kategori</div>
                     <div className="row justify-content-center">
-                        {this.renderCart()}
+                        {this.renderSubkategori()}
                     </div>
             </div>
             ) 
     }
 }
 
-export default Kategori
+export default Subkategori

@@ -144,16 +144,23 @@ class CustomPaginationActionsTable extends React.Component {
     rowsPerPage: 5,
     isEdit:false,
     editItem:{},
-    listKat:[]
+    listKat:[],
+    listSubKat:[],
+    listSubKatEdit:[],
+    selectedKat:-1,
+    addFileProduct:null,
+    selectedKatEdit:1,
+    editFileProduct:null
   };
 
   componentDidMount(){
     this.getDataApi()
     this.getCategory()
+    //this.getSubCategory()
   }
 
   getDataApi=()=>{
-      Axios.get(urlApi+'/product')
+      Axios.get(urlApi+'/product/getproductfull')
       .then((res)=>{
         console.log(res)
         this.setState({rows:res.data})
@@ -163,7 +170,7 @@ class CustomPaginationActionsTable extends React.Component {
       })
   }
   getCategory=()=>{
-    Axios.get('http://localhost:2000/tipekategori')
+    Axios.get('http://localhost:4000/kategori/getkategori')
     .then((res)=>{
         console.log(res)
         this.setState({listKat:res.data})
@@ -175,12 +182,53 @@ class CustomPaginationActionsTable extends React.Component {
 renderDropDown=()=>{
     var jsx=this.state.listKat.map((val)=>{
         return(
-            <option ref ="kategori" value={val.tipekat}> 
-                {val.tipekat}
+            <option ref ="kategori" value={val.id}> 
+                {val.kategori}
             </option>
         )
     })
     return jsx
+}
+getSubCategory=()=>{
+  Axios.get('http://localhost:4000/kategori/getsubbykat/'+this.refs.filterKatAdd.value)
+  .then((res)=>{
+      console.log(res)
+      this.setState({listSubKat:res.data})
+  })
+  .catch((err)=>{
+      console.log(err)
+  })
+}
+getSubCategoryEdit=(id)=>{
+  alert('masuk')
+  Axios.get('http://localhost:4000/kategori/getsubbykat/'+id)
+  .then((res)=>{
+      console.log(res)
+      this.setState({listSubKatEdit:res.data})
+  })
+  .catch((err)=>{
+      console.log(err)
+  })
+}
+renderDropDownSub=()=>{
+  var jsx=this.state.listSubKat.map((val)=>{
+      return(
+          <option ref ="kategori" value={val.id}> 
+              {val.subkategori}
+          </option>
+      )
+  })
+  return jsx
+}
+renderDropDownSubEdit=()=>{
+  var jsx=this.state.listSubKatEdit.map((val)=>{
+      return(
+          <option ref ="kategoriEdit" value={val.id}> 
+              {val.subkategori}
+          </option>
+      )
+  })
+  return jsx
 }
 
   onBtnAdd=()=>{
@@ -188,13 +236,22 @@ renderDropDown=()=>{
       var harga=parseInt(this.harga.inputRef.value)
       var diskon=parseInt(this.diskon.inputRef.value)
       // var kategori=this.kategori.inputRef.value
-      var kategori=this.refs.kategori.value
-      var gambar=this.gambar.inputRef.value
+      var idsubkat=this.refs.addSubkat.value
+      //var gambar=this.gambar.inputRef.value
       var deskripsi=this.deskripsi.inputRef.value
       
       //properti harus sesuai dengan db.json
 
-      var newData={nama:nama,harga:harga,kategori:kategori,diskon:diskon,deskripsi:deskripsi,link:gambar}
+      var newData={nama:nama,harga:harga,idsubkat:idsubkat,diskon:diskon,deskripsi:deskripsi}
+      console.log(newData)
+      console.log(this.state.addFileProduct)
+      var fd=new FormData()
+      if (this.state.addFileProduct !==null){
+        alert('Ada Image')
+        fd.append('imageprd',this.state.addFileProduct,this.state.addFileProduct.name)
+      }
+      fd.append('data',JSON.stringify(newData))
+      console.log(fd)
     //   alert(nama)
     //   alert(harga)
     //   alert(diskon)
@@ -202,7 +259,7 @@ renderDropDown=()=>{
     //   alert(gambar)
     //   alert(deskripsi)
 
-      Axios.post(urlApi+'/product',newData)
+      Axios.post(urlApi+'/product/addproduct',fd)
         .then((res)=>{
             // swal("Add Product !","Add Product Success","success","OK")
             swal({title: "Add Product!",
@@ -214,20 +271,27 @@ renderDropDown=()=>{
             this.nama.inputRef.value=''
             this.harga.inputRef.value=0
             this.diskon.inputRef.value=0
-            // this.kategori.inputRef.value=''
-            this.refs.kategori.value=''
-            this.gambar.inputRef.value=''
             this.deskripsi.inputRef.value=''
+            // this.kategori.inputRef.value=''
+            this.refs.filterKatAdd.value=-1
+            this.setState({addFileProduct:null})
+            
+            
+            this.getCategory()
+            this.getSubCategory()
         })
         .catch((err)=>console.log(err))
 
   }
   onBtnEdit=(val)=>{
-    this.setState({isEdit:true,editItem:val})
+
+    this.setState({isEdit:true,editItem:val,selectedKatEdit:val.id})
+    console.log(val)
+    this.getSubCategoryEdit(val.idkat)
   }
 
   onBtnDelete=(id)=>{
-      Axios.delete(urlApi+'/product/'+id)
+      Axios.delete(urlApi+'/product/delproduct/'+id)
       .then((res)=>{
         console.log(res)
         swal({title: "Delete Product!",
@@ -251,8 +315,8 @@ renderDropDown=()=>{
     var harga=this.hargaEdit.inputRef.value ==="" ? this.state.editItem.harga : this.hargaEdit.inputRef.value
     var diskon=this.diskonEdit.inputRef.value ==="" ? this.state.editItem.diskon : this.diskonEdit.inputRef.value
     // var kategori=this.kategoriEdit.inputRef.value ==="" ? this.state.editItem.kategori : this.kategoriEdit.inputRef.value
-    var kategori=this.refs.kategori.value ==="" ? this.state.editItem.kategori : this.refs.kategori.value
-    var gambar=this.gambarEdit.inputRef.value ==="" ? this.state.editItem.link : this.gambarEdit.inputRef.value
+    var idsubkat=this.refs.editSubkat.value ==="" ? this.state.editItem.idsubkat : this.refs.editSubkat.value
+    //var gambar=this.gambarEdit.inputRef.value ==="" ? this.state.editItem.image : this.gambarEdit.inputRef.value
     var deskripsi=this.deskripsiEdit.inputRef.value ==="" ? this.state.editItem.deskripsi : this.deskripsiEdit.inputRef.value
     // alert(nama)
     // alert(harga)
@@ -260,8 +324,18 @@ renderDropDown=()=>{
     // alert(kategori)
     // alert(gambar)
     // alert(deskripsi)
-    var newData={nama:nama,harga:harga,kategori:kategori,diskon:diskon,link:gambar,deskripsi}
-    Axios.put(urlApi+'/product/'+this.state.editItem.id,newData)
+    var newData={nama:nama,harga:harga,idsubkat:idsubkat,diskon:diskon,deskripsi:deskripsi}
+      console.log(newData)
+      console.log(this.state.editFileProduct)
+      var fd=new FormData()
+      if (this.state.editFileProduct !==null){
+        alert('Ada Image')
+        fd.append('imageprd',this.state.editFileProduct,this.state.editFileProduct.name)
+      }
+      fd.append('data',JSON.stringify(newData))
+      console.log(fd)
+
+    Axios.put(urlApi+'/product/editproduct/'+this.state.editItem.id,fd)
     .then((res)=>{
       console.log(res)
       this.getDataApi()
@@ -269,7 +343,8 @@ renderDropDown=()=>{
               text: "Edit Product Success",
               icon: "success",
               button: "OK"})
-      this.setState({isEdit:false,editItem:{}})
+      this.setState({isEdit:false,editItem:{},editFileProduct:null})
+     
       
     })
     .catch((err)=>{
@@ -289,10 +364,10 @@ renderDropDown=()=>{
                 </TableCell>
                 <TableCell align="left">Rp. {val.harga}</TableCell>
                 <TableCell align="left">{val.diskon}</TableCell>
-                <TableCell align="left">{val.kategori}</TableCell>
+                <TableCell align="left">{val.namasubkat}</TableCell>
                 
                 
-                <TableCell align="left"><img src={val.link} width="120" height="80"/></TableCell>
+                <TableCell align="left"><img src={"http://localhost:4000/"+val.image} width="120" height="80"/></TableCell>
                 <TableCell align="left">{val.deskripsi}</TableCell>
                 <TableCell>
                     <Button animated color='blue'onClick={()=>{this.onBtnEdit(val)}}>
@@ -330,13 +405,40 @@ renderDropDown=()=>{
     this.setState({ page: 0, rowsPerPage: event.target.value });
   };
 
+  valueHandlerAddProduct=()=>{
+    var value= this.state.addFileProduct ? this.state.addFileProduct.name : "Upload"
+    return value
+  }
+  onChangeHandlerAddProduct=(event)=>{
+    console.log(event.target.files[0])
+        this.setState({addFileProduct:event.target.files[0]})
+  }
+  valueHandlerEditProduct=()=>{
+    var value= this.state.editFileProduct ? this.state.editFileProduct.name : "Upload"
+    return value
+  }
+  onChangeHandlerEditProduct=(event)=>{
+    console.log(event.target.files[0])
+        this.setState({editFileProduct:event.target.files[0]})
+  }
+  filterByKat=()=>{
+    console.log(this.refs.filterKatAdd.value)
+    this.setState({selectedKat:this.refs.filterKatAdd.value})
+    this.getSubCategory()
+  }
+  filterByKatEdit=()=>{
+    console.log(this.refs.filterKatEdit.value)
+    this.setState({selectedKatEdit:this.refs.filterKatEdit.value})
+    this.getSubCategoryEdit(this.refs.filterKatEdit.value)
+  }
+
   render() {
     
     const { classes } = this.props;
     const { rows, rowsPerPage, page } = this.state;
     const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
 
-    var{nama,harga,diskon,kategori,link,deskripsi}=this.state.editItem
+    var{idkat,idsubkat,nama,harga,diskon,kategori,namasubkat,image,deskripsi}=this.state.editItem
     if(this.props.role==="admin"){
       return (
           <div className="container">
@@ -416,13 +518,22 @@ renderDropDown=()=>{
                               <Label>%</Label>
                               </Input>
                               {/* <Input className="mr-2 mb-2" placeholder="Kategori" ref={input=>this.kategori=input}></Input> */}
-                              <select className="form-control form-control-sm mb-2" style={{width:'150px'}}>
-                                <option></option>
+                              <select className="form-control form-control-sm mb-2" style={{width:'150px'}} onChange={this.filterByKat} ref="filterKatAdd">
+                                <option value={-1}>-Pilih Kategori-</option>
                                     {this.renderDropDown()}
                                 </select>
-                              <Button className="mr-2 mb-2" placeholder="Gambar" ref={input=>this.gambar=input}>Upload Img</Button>
-                              <Input className="mr-2 mb-2" placeholder="Upload" ref={input=>this.gambar=input} type="file"></Input>
-                              <Input className="mr-2 mb-2" placeholder="Deskripsi" ref={input=>this.deskripsi=input}></Input>
+                                {this.state.selectedKat >0?
+                                  <select className="form-control form-control-sm mb-2" style={{width:'150px'}} ref="addSubkat">
+                                <option>-Pilih SubKategori-</option>
+                                    {this.renderDropDownSub()}
+                                </select>:null
+                                }
+                                
+                                <input style={{display:'none',marginBottom:'5'}} type="file" ref="imgAddProduct" onChange={this.onChangeHandlerAddProduct}/>
+                            <input type="button" className="form-control btn btn-success mb-1" onClick={()=>this.refs.imgAddProduct.click()} value={this.valueHandlerAddProduct()}/>
+                              {/* <Button className="mr-2 mb-2" placeholder="Gambar" ref={input=>this.gambar=input}>Upload Img</Button>
+                              <Input className="mr-2 mb-2" placeholder="Upload" ref={input=>this.gambar=input} type="file"></Input> */}
+                              <Input className="mr-2 mb-2" placeholder="Deskripsi" ref={input=>this.deskripsi=input} ></Input>
                               <Button color='blue'>
                                   <Button.Content onClick={this.onBtnAdd}>Add Product</Button.Content>
                               </Button>
@@ -458,11 +569,22 @@ renderDropDown=()=>{
                               <Label>%</Label>
                               </Input>
                               {/* <Input className="mr-2 mb-2" placeholder={kategori} ref={input=>this.kategoriEdit=input}></Input> */}
-                              <select className="form-control form-control-sm mb-2" style={{width:'150px'}}>
-                                <option selected>{kategori}</option>
+                              <select className="form-control form-control-sm mb-2" style={{width:'150px'}} ref="filterKatEdit" onChange={this.filterByKatEdit}>
+                                <option selected value={idkat}>{kategori}</option>
                                     {this.renderDropDown()}
                                 </select>
-                              <Input className="mr-2 mb-2" placeholder={link} ref={input=>this.gambarEdit=input}></Input>
+                                {
+                                  this.state.selectedKatEdit >0?
+                                  <select className="form-control form-control-sm mb-2" style={{width:'150px'}} ref="editSubkat">
+                                {/* <option selected>{}</option> */}
+                                <option selected value={idsubkat}>{namasubkat}</option>
+                                    {this.renderDropDownSubEdit()}
+                                </select>:null
+                                }
+                                  
+                                  <input style={{display:'none',marginBottom:'5'}} type="file" ref="imgEditProduct" onChange={this.onChangeHandlerEditProduct}/>
+                            <input type="button" className="form-control btn btn-success mb-1" onClick={()=>this.refs.imgEditProduct.click()} value={this.valueHandlerEditProduct()}/>  
+                              {/* <Input className="mr-2 mb-2" placeholder={image} ref={input=>this.gambarEdit=input}></Input> */}
                               <Input className="mr-2 mb-2" placeholder={deskripsi} ref={input=>this.deskripsiEdit=input}></Input>
                               <Button color='blue'>
                                   <Button.Content onClick={this.onBtnSave}>Save</Button.Content>

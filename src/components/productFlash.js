@@ -10,7 +10,8 @@ class Product extends React.Component{
     }
 
     getProduct=()=>{
-        Axios.get('http://localhost:2000/product?diskon=10&diskon=5&_page=1&_limit=8')
+        //Axios.get('http://localhost:2000/product?diskon=10&diskon=5&_page=1&_limit=8')
+        Axios.get('http://localhost:4000/product/getpromo')
         .then((res)=>{
             this.setState({listProduct:res.data})
             //alert(res.data[0].nama)
@@ -30,7 +31,7 @@ class Product extends React.Component{
                         <Link to={"/productdetail/"+val.id}>
                         <div class="gradienteff">
                         
-                            <img className="card-img-top img img-1" src={val.link} alt={val.nama} style={{height:'150px'}} />
+                            <img className="card-img-top img img-1" src={'http://localhost:4000/'+val.image} alt={val.nama} style={{height:'150px'}} />
                             {/* <div>{val.id}</div> */}
                         
                             
