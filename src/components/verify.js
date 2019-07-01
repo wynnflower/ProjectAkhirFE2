@@ -20,10 +20,10 @@ class Verify extends React.Component{
                 username: this.state.username,
                 password : this.state.password
             }
-             alert(verifyData.kode)
+            //alert(verifyData.kode)
             // alert(verifyData.username)
             // alert(verifyData.password)
-            axios.post('http://localhost:4000/user/verify',verifyData)
+            axios.put('http://localhost:4000/user/verify',verifyData)
             .then((res)=>{
                 if(typeof(res.data)==='object'){
                     alert(res.data.msg)
@@ -52,14 +52,14 @@ class Verify extends React.Component{
                                 {/* <input type="text" style={{width:'50%'}} className="form-control mb-2" placeholder="Masukkan Kode"/> */}
                                 <input className="mb-2 mr-2" type="text" ref="verifyCode" placeholder=""/>
                                 <input type="button" value="verify" className="btn btn-primary" onClick={this.onBtnVerify}/>
-                                <p className="mb-2">Klik di sini apabila anda tidak menerima kode verifikasi</p>    
+                                {/* <p className="mb-2">Klik di sini apabila anda tidak menerima kode verifikasi</p>     */}
                             </center>         
                         </div>
                     )
         }
         return(
             <center>
-                <h1>Verification Success, Klik di sini untuk login</h1>
+                <h1>Verification Success, Klik di <Link to="/login">sini</Link> untuk login</h1>
             </center>
         )
         

@@ -4,6 +4,8 @@ import {connect} from 'react-redux'
 import {Redirect} from 'react-router-dom'
 import { urlApi } from '../support/urlAPI';
 import swal from 'sweetalert'
+import {getUserCart} from './../1.actions'
+
 
 class Cart extends React.Component{
     state={cart:[],username:"",editItem:{},totalHarga:0}
@@ -88,6 +90,7 @@ class Cart extends React.Component{
         Axios.delete(urlApi+'/cart/delcart?id='+id+'&username='+this.state.username)
         .then((res)=>{
           console.log(res)
+          this.props.getUserCart(this.props.nama)
           swal({title: "Delete Cart!",
                 text: "Delete Item di Cart Success",
                 icon: "success",
@@ -129,7 +132,6 @@ class Cart extends React.Component{
             console.log(err)
         })
     }
-    
     renderCart=()=>{
         var jsx=this.state.cart.map((val)=>{
             if (this.props.nama!==""){
@@ -177,7 +179,34 @@ class Cart extends React.Component{
         )
     }
     onCheckout=()=>{
-
+        if(this.props.cart>0){
+           var username=this.props.nama
+           Axios.get(urlApi+'/transaction/checkalamat?username='+username)
+            .then((res)=>{
+                console.log(res)
+                if(res.data=='Verifikasi data diri sukses'){
+                    Axios.post(urlApi+'/transaction/checkout?username='+username)
+                    .then((res)=>{
+                        console.log(res)
+                        this.props.getUserCart(this.props.nama)
+                        this.getDataApi()
+                        alert('Checkout Success')
+                    })
+                    .catch((err)=>{
+                        console.log(err)
+                    }) 
+                } else {
+                    alert('Silahkan lengkapi data diri anda terlebih dahulu di Menu-Edit Profile')
+                }
+            })
+            .catch((err)=>{
+                console.log(err)
+            }) 
+            
+        } else{
+            alert('Tidak ada item')
+        }
+        
     }
     render(){
         if(this.props.nama!==""){
@@ -203,7 +232,7 @@ class Cart extends React.Component{
                                 <tr>
                                     <td colspan="6" style={{textAlign:'right',fontSize:'16px',fontWeight:'700'}}>Total Harga</td>
                                     <td>{this.getTotal()}</td>
-                                    <td><button className="btn btn-primary" onClick={this.getDataHistory}>Checkout</button></td>
+                                    <td><button className="btn btn-primary" onClick={this.onCheckout}>Checkout</button></td>
                                 </tr>
                             </tfoot>
                         </table>
@@ -218,7 +247,8 @@ class Cart extends React.Component{
 }
 const mapStateToProps =(state)=>{ 
     return {
-        nama: state.user.username
+        nama: state.user.username,
+        cart:state.user.cartitems
     }
 }
-export default connect(mapStateToProps)(Cart)
+export default connect(mapStateToProps,{getUserCart})(Cart)

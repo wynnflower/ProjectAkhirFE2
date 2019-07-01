@@ -3,15 +3,17 @@ import { Link,Redirect } from 'react-router-dom'
 import {connect} from 'react-redux'
 import {userRegister} from './../1.actions'
 import Loader from 'react-loader-spinner'
+//import cookie from 'universal-cookie' // object
 
-
+//const Cookie = new cookie() // bikin kelas
 class Register extends React.Component{
     state={error:''} // untuk proteksi
-    componentWillReceiveProps(newProps){// kalau nilai errornya ganti
-        if(newProps.error!==''){
-            this.setState({error:newProps.error})
-        }
-    }
+    // componentWillReceiveProps(newProps){// kalau nilai errornya ganti
+    //     if(newProps.error!==''){
+    //         this.setState({error:newProps.error})
+    //     }
+    //     Cookie.set('userData',newProps.username,{path:'/'})
+    // }
     renderErrorMessage=()=>{// untuk menampilkan error message
         if (this.state.error !==''){
             return <div className="alert alert-danger mt-3" style={{textAlign:'center'}} role="alert">

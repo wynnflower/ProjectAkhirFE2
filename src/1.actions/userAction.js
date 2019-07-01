@@ -1,6 +1,7 @@
 import axios from 'axios'
 import {urlApi} from './../support/urlAPI' // urlAPi -> dari const di urlApi.js, kalau default pake alias
 import cookie from 'universal-cookie'
+import swal from 'sweetalert';
 
 const objCookie=new cookie()
 export const onLogin=(paramUsername,paramPassword)=>{
@@ -22,7 +23,17 @@ export const onLogin=(paramUsername,paramPassword)=>{
             console.log(res)
             // if username dan password sesuai maka res.data ada isinya
             if(res.data.length>0){
-                dispatch(
+                //alert(res.data[0].username)
+                if(res.data=='Please Verify your Email'){
+                    dispatch({
+                        type:'NEED_VERIFICATION'
+                    })
+                }else if(res.data=='Username / Password invalid'){
+                    dispatch({
+                        type:'USER_NOT_FOUND'
+                    })
+                } else {
+                   dispatch(
                     {
                         type: 'LOGIN_SUCCESS',
                         payload:{
@@ -33,8 +44,11 @@ export const onLogin=(paramUsername,paramPassword)=>{
                             cartitems:res.data[0].cartitems
                         }
                     }
-                )
-                objCookie.set('userData',paramUsername,{path:'/'})
+                    )
+
+                objCookie.set('userData',paramUsername,{path:'/'}) 
+                }
+                
             } else{
                 dispatch({
                     type:'USER_NOT_FOUND'
@@ -56,13 +70,46 @@ export const keepLogin=(cookie)=>{
         axios.get('http://localhost:4000/user/keeplogincart',{params:{username:cookie}})
         .then((res)=>{
             if(res.data.length>0){
-                dispatch({
+                //alert('cookie get')
+                if(res.data=='Please Verify your Email'){
+                    dispatch({
+                        type:'NEED_VERIFICATION'
+                    })
+                }else if(res.data=='Username / Password invalid'){
+                    dispatch({
+                        type:'USER_NOT_FOUND'
+                    })
+                }else{
+                   dispatch({
                     type:'LOGIN_SUCCESS',
                     payload:{
                         username:res.data[0].username,
                         role:res.data[0].role,
                         id:res.data[0].id,
                         verified:res.data[0].verified,
+                        cartitems:res.data[0].cartitems
+                    }// <-- dari userGlobal
+                }) 
+                }
+                
+            }
+        })
+        .catch((err)=>console.log(err))
+    }
+    
+}
+
+export const getUserCart=(paramUsername)=>{
+    return (dispatch)=>{
+        axios.get('http://localhost:4000/cart/getcartcount',{params:{username:paramUsername}})
+        .then((res)=>{
+            if(res.data.length>0){
+                dispatch({
+                    type:'ADD_CART',
+                    payload:{
+                        username:res.data[0].username,
+                        verified:res.data[0].verified,
+                        id:res.data[0].id,
                         cartitems:res.data[0].cartitems
                     }// <-- dari userGlobal
                 })
@@ -85,27 +132,39 @@ export const userRegister=(paramUsername,paramPassword,paramEmail,paramPhone)=>{
             type:'LOADING'
         })
         var newData={username:paramUsername,password:paramPassword,email:paramEmail,phone:paramPhone}
-        axios.get(urlApi+'/user/register?username='+newData.username)
+        axios.get(urlApi+'/user/checkusername?username='+newData.username)
         .then((res)=>{ // kalau username sudah ada
             console.log(res)
+
             if(res.data.length>0){
                 dispatch({
                     type:'USERNAME_NOT_AVAILABLE'
                 })
             } else{ // kalau username belum ada
-                axios.post(urlApi+'/users',newData)
+                axios.post(urlApi+'/user/register2',newData)
                 .then((res)=>{
                     console.log(res)
+            // alert('masuk')
+                    alert('Registrasi berhasil, Silahkan lakukan verifikasi via email untuk mengaktifkan akun!')
+                    swal({title: "Registration",
+                    text: "Registrasi Sukses, Cek Email untuk verifikasi",
+                    icon: "success",
+                    button: "OK"})
                     dispatch({
-                        type:'LOGIN_SUCCESS',
-                        // payload:paramUsername
-                        payload:{username:res.data[0].username,
-                            role:res.data[0].role,
-                            id:res.data[0].id}
-                        //mengirim payload dalam bentuk object
-                        //payload:{username:newData.username,id:res.data.id,email:paramEmail}
+                        type:'REGISTER_SUCCESS'
                     })
-                    objCookie.set('userData',paramUsername,{path:'/'})
+                    // dispatch({
+                    //     type:'LOGIN_SUCCESS',
+                    //     // payload:paramUsername
+                    //         payload:{username:res.data[0].username,
+                    //             role:res.data[0].role,
+                    //             id:res.data[0].id,
+                    //             verified:res.data[0].verified,
+                    //             cartitems:res.data[0].cartitems}
+                    //     //mengirim payload dalam bentuk object
+                    //     //payload:{username:newData.username,id:res.data.id,email:paramEmail}
+                    // })
+                    // objCookie.set('userData',paramUsername,{path:'/'})
                 })
                 .catch((err)=>{
                     console.log(err)

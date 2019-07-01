@@ -3,6 +3,7 @@ import Axios from 'axios'
 import { throws } from 'assert';
 
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
+import swal from 'sweetalert';
 
 class ManageKategori extends React.Component{
     state={listKat:[],listSubkat:[],selectedFileKat:null,
@@ -130,7 +131,14 @@ class ManageKategori extends React.Component{
         })
     }
     addKategori=()=>{
-        var data={
+        if(this.refs.namaKat.value==''){
+            //alert('error')
+            swal({title: "Add Kategori!",
+            text: "Isi semua Data !",
+            icon: "error",
+            button: "OK"})
+        } else {
+            var data={
             kategori:this.refs.namaKat.value,
           }
           var fd=new FormData()
@@ -144,12 +152,17 @@ class ManageKategori extends React.Component{
             if(res.data.error){
               this.setState({error:res.data.msg,selectedFileKat:null})
             }
-            alert(res.data)
-            this.getProduct()
+            swal({title: "Add Kategori!",
+      text: "Add Kategori Success !",
+      icon: "success",
+      button: "OK"})
+            this.getKategori()
           })
           .catch((err)=>{
             console.log(err)
           })
+        }
+        
     }
     renderSubkategori=()=>{
         var jsx = this.state.listSubkat.map((val)=>{
@@ -240,6 +253,13 @@ class ManageKategori extends React.Component{
         })
     }
     addSubkategori=()=>{
+        if(this.refs.addSubkategori.value==''){
+            //alert('error')
+            swal({title: "Add SubKategori!",
+            text: "Isi semua Data !",
+            icon: "error",
+            button: "OK"})
+        } else {
         var data={
             idkat:this.refs.ddAddKategori.value,
             namasubkat:this.refs.addSubkategori.value
@@ -255,13 +275,17 @@ class ManageKategori extends React.Component{
             if(res.data.error){
               this.setState({error:res.data.msg,selectedFileSkat:null})
             }
-            alert(res.data)
+            swal({title: "Add SubKategori!",
+            text: "Add Subkategori Sukses",
+            icon: "success",
+            button: "OK"})
             this.refs.addSubkategori.value=''
             this.getSubkategori()
           })
           .catch((err)=>{
             console.log(err)
           })
+        }
     }
     render(){
         return (<div>

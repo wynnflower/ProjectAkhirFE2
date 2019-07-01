@@ -200,7 +200,7 @@ getSubCategory=()=>{
   })
 }
 getSubCategoryEdit=(id)=>{
-  alert('masuk')
+  //alert('masuk')
   Axios.get('http://localhost:4000/kategori/getsubbykat/'+id)
   .then((res)=>{
       console.log(res)
@@ -231,33 +231,32 @@ renderDropDownSubEdit=()=>{
   return jsx
 }
 
-  onBtnAdd=()=>{
-      var nama=this.nama.inputRef.value
-      var harga=parseInt(this.harga.inputRef.value)
-      var diskon=parseInt(this.diskon.inputRef.value)
-      // var kategori=this.kategori.inputRef.value
-      var idsubkat=this.refs.addSubkat.value
-      //var gambar=this.gambar.inputRef.value
-      var deskripsi=this.deskripsi.inputRef.value
-      
-      //properti harus sesuai dengan db.json
-
+onBtnAdd=()=>{
+    var nama=this.nama.inputRef.value
+    var harga=parseInt(this.harga.inputRef.value)
+    var diskon=parseInt(this.diskon.inputRef.value)
+    // var kategori=this.kategori.inputRef.value
+    var idsubkat=this.refs.addSubkat.value
+    //var gambar=this.gambar.inputRef.value
+    var deskripsi=this.deskripsi.inputRef.value
+    //alert(nama+harga+diskon+idsubkat+deskripsi)
+    if(nama=='' || harga ==0 || diskon ==0 || idsubkat ==-1 || deskripsi ==''){
+      swal({title: "Add Product!",
+      text: "Isi semua Data !",
+      icon: "error",
+      button: "OK"})
+    } else {
       var newData={nama:nama,harga:harga,idsubkat:idsubkat,diskon:diskon,deskripsi:deskripsi}
       console.log(newData)
       console.log(this.state.addFileProduct)
       var fd=new FormData()
       if (this.state.addFileProduct !==null){
-        alert('Ada Image')
+        //alert('Ada Image')
         fd.append('imageprd',this.state.addFileProduct,this.state.addFileProduct.name)
       }
       fd.append('data',JSON.stringify(newData))
       console.log(fd)
-    //   alert(nama)
-    //   alert(harga)
-    //   alert(diskon)
-    //   alert(kategori)
-    //   alert(gambar)
-    //   alert(deskripsi)
+
 
       Axios.post(urlApi+'/product/addproduct',fd)
         .then((res)=>{
@@ -281,10 +280,13 @@ renderDropDownSubEdit=()=>{
             this.getSubCategory()
         })
         .catch((err)=>console.log(err))
+    }
+    //properti harus sesuai dengan db.json
 
-  }
+    
+
+}
   onBtnEdit=(val)=>{
-
     this.setState({isEdit:true,editItem:val,selectedKatEdit:val.id})
     console.log(val)
     this.getSubCategoryEdit(val.idkat)
@@ -524,7 +526,7 @@ renderDropDownSubEdit=()=>{
                                 </select>
                                 {this.state.selectedKat >0?
                                   <select className="form-control form-control-sm mb-2" style={{width:'150px'}} ref="addSubkat">
-                                <option>-Pilih SubKategori-</option>
+                                <option value={-1}>-Pilih SubKategori-</option>
                                     {this.renderDropDownSub()}
                                 </select>:null
                                 }

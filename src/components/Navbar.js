@@ -8,7 +8,7 @@ import './../support/css/navbar.css'
 
 const objCookie=new cookie()
 class HeaderKu extends Component{
-
+    state={search:''}
     constructor(props) {
         super(props);
     
@@ -39,9 +39,9 @@ class HeaderKu extends Component{
                             <Nav className="ml-auto" navbar>
                                 <NavItem>
                                 <div className="input-group" style={{width:"350px"}}>
-                                    <input type="text" ref="searchBook" className="form-control" placeholder="Masukkan kata kunci ... " style={{backgroundColor:'#3F448',color:'white'}} />
+                                    <input type="text" onChange={()=>{this.setState({search:this.refs.searchBook.value})}} ref="searchBook" className="form-control" placeholder="Masukkan kata kunci ... " style={{backgroundColor:'#3F448',color:'black'}} />
                                     <div className="input-group-append mr-2">
-                                        <button className="btn border-secondary" type="button" id="button-addon2"><i className="fas fa-search navbarcontent" /></button>
+                                    <Link to={"/search?search="+this.state.search}><button className="btn border-secondary" type="button" id="button-addon2"><i className="fas fa-search navbarcontent" /></button></Link> 
                                     </div>
                                 </div> 
                                 </NavItem>
@@ -83,11 +83,33 @@ class HeaderKu extends Component{
                                         <span className="navbarcontent">Menu</span>
                                     </DropdownToggle>
                                     <DropdownMenu right>
+                                    {
+                                        this.props.role==="admin"?
+                                        <DropdownItem>
+                                        <Link to="/managetrans">Manage Transaksi</Link>
+                                        </DropdownItem>
+                                        :null
+                                    }
+                                    {
+                                        this.props.role==="admin"?
+                                        <DropdownItem>
+                                        <Link to="/manage">Manage Produk</Link>
+                                        </DropdownItem>
+                                        :null
+                                    }
+                                    {
+                                        this.props.role==="admin"?
+                                        <DropdownItem>
+                                        <Link to="/managekat">Manage Kategori</Link>
+                                        </DropdownItem>
+                                        :null
+                                    }
                                     <DropdownItem>
                                         <Link to='/history'>Histori Transaksi</Link>
                                     </DropdownItem>
+                                    
                                     <DropdownItem>
-                                        Edit Profile
+                                        <Link to='/manageuser'> Edit Profile</Link>
                                     </DropdownItem>
                                     <DropdownItem divider />
                                     <DropdownItem onClick={this.onBtnLogout}>

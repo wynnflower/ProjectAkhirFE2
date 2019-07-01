@@ -17,6 +17,10 @@ import ProductByKat from './components/productByKategori'
 import ProductBySubkat from './components/productBySubkat'
 import ManageKategori from './components/admin/manageKategori'
 import Verify from './components/verify'
+import ManageTransaksi from './components/admin/manageTransaksi'
+import ViewTransactionDetail from './components/admin/viewTransDetail'
+import SearchPage from './components/search'
+import ManageUser from './components/manageUser'
 
 import { Route, withRouter, Switch } from 'react-router-dom'
 import { connect } from 'react-redux'
@@ -31,6 +35,7 @@ const objCookie=new cookie()
 class App extends Component {
   componentDidMount(){
     var getCookie=objCookie.get('userData')
+    //alert('getCookie: '+getCookie)
     if (getCookie !== undefined){
       this.props.keepLogin(getCookie)
     }
@@ -50,7 +55,11 @@ class App extends Component {
             <Route path='/flashproducts' component={ProductFlash} exact/>
             <Route path='/manage' component={ManageProduct} exact/>
             <Route path='/managekat' component={ManageKategori} exact/>
+            <Route path='/managetrans' component={ManageTransaksi} exact/>
+            <Route path='/viewtransdetail' component={ViewTransactionDetail} exact/>
             <Route path='/cart' component={Cart} exact/>
+            <Route path='/search' component={SearchPage} exact/>
+            <Route path='/manageuser' component={ManageUser} exact/>
             <Route path='/kategori' component={Kategori} exact/>
             <Route path='/productbykat/:tipekat' component={ProductByKat} exact/>
             <Route path='/productbysubkat/:idsubkat' component={ProductBySubkat} exact/>
